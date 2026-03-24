@@ -16,12 +16,15 @@ class DisplayResultStreamlit:
         logger.info("inside display_result_on_ui method")
         graph = self.graph
         logger.info(f"graph:{graph}")
-        frequency = self.user_message
+        frequency = self.user_message["frequency"]
         logger.info(f"frequency:{frequency}")
+        user_chat_input = self.user_message["user_chat_input"]
+        logger.info(f"user_chat_input inside display_result_on_ui:{user_chat_input}")
         with st.spinner("Fetching and summarizer news ...."):
-            result = graph.invoke({"messages":frequency})
+            result = graph.invoke({"messages":[HumanMessage(content=frequency)],
+            "user_chat_input":[HumanMessage(content = user_chat_input)]})
             try:
-                ai_news_path = f"{const.AI_NEWS_PATH}_{frequency.lower()}_summary.md"
+                ai_news_path = f"{const.AI_NEWS_PATH}_{user_chat_input}_{frequency.lower()}_summary.md"
                 with open(ai_news_path,"r") as file:
                     markdown_content = file.read()
                 

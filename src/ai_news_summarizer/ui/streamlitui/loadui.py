@@ -16,8 +16,16 @@ class LoadStreamlitUI:
         logger.info(f"page_title:{page_title}")
         st.set_page_config(page_title= page_title)
         st.header(page_title)
-        st.session_state.timeframe = ''
-        st.session_state.IsFetchButtonClicked = False
+
+ #       st.session_state.IsFetchButtonClicked = False
+        user_chat_msg = st.chat_input("Please enter the topic to get the summaries")
+        logger.info(f"User chat msg:{user_chat_msg}")
+        if user_chat_msg is not None:
+            st.session_state.user_chat_input = user_chat_msg
+            st.session_state.should_run_graph = True
+        self.user_controls["user_chat_input"] = st.session_state.get("user_chat_input","")
+        if "timeframe" not in st.session_state:
+            st.session_state.timeframe = "Daily"
 
         with st.sidebar:
             llm_options = self.config.get_llm_options()
@@ -37,10 +45,11 @@ class LoadStreamlitUI:
 
                 with st.sidebar:
                     time_frame = st.selectbox("Select Time Frame",["Daily","Weekly","Monthly"], index=0)
-                    if st.button("Fetch latest AI News", use_container_width= True):
-                        st.session_state.IsFetchButtonClicked = True
-                        logger.info(f"time frame:{time_frame}")
-                        st.session_state.timeframe = time_frame
-                        self.user_controls['frequency'] = time_frame
+                    #if st.button("Fetch latest AI News", use_container_width= True):
+                        #st.session_state.IsFetchButtonClicked = True
+                    logger.info(f"time frame:{time_frame}")
+                    
+                    st.session_state.timeframe = time_frame
+                    self.user_controls['frequency'] = st.session_state.timeframe
                     
         return self.user_controls

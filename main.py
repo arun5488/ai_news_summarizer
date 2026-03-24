@@ -20,7 +20,7 @@ def load_ai_new_summarizer():
         st.error("Error: Failed to load input from UI")
         return 
     
-    if st.session_state.IsFetchButtonClicked:
+    if st.session_state.get("should_run_graph"):
         try:
             obj_llm_config = OpenAILLM(user_controls_input=user_input)
             model = obj_llm_config.get_llm_model()
@@ -28,7 +28,8 @@ def load_ai_new_summarizer():
             graph_builder = GraphBuilder(model)
             try:
                 graph = graph_builder.setup_graph()
-                DisplayResultStreamlit(graph, user_message=user_input['frequency']).display_result_on_ui()
+                DisplayResultStreamlit(graph, user_message=user_input).display_result_on_ui()
+                st.session_state.should_run_graph = False
             except Exception as e:
                 logger.error(f"Error: Graph setup failed:{e}")
                 return
